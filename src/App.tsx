@@ -2,12 +2,17 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import UserPage from '@/pages/user'
+import { TestPlain } from './modules/test/component'
 
 function App() {
   const [count, setCount] = useState(1)
 
   return (
-    <>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<>
       <div>
         <a href="https://vite.dev" target="_blank" rel="noopener noreferrer">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -28,7 +33,16 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-    </>
+    </>} />
+    <Route path="/user" element={<UserPage />} />
+    <Route path='/test' element={
+      <>
+      <TestPlain title='test_name' size={2} render={() => <div style={{color : 'red'}}>render fx</div>} />
+      <TestPlain title='test_name' size={2} render={() => <div style={{color : 'red'}}>render fx</div>} />
+      </>
+      } />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
