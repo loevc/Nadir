@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机点菜系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f1ea;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-image: 
+                radial-gradient(#e8e4dd 2px, transparent 2px),
+                radial-gradient(#e0dcd4 2px, transparent 2px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 90vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            font-size: 3.8rem;
+            color: #8a7f6e;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 3px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background-color: #a89b87;
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #9c9080;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+        
+        .menu-display {
+            width: 90%;
+            max-width: 900px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(138, 127, 110, 0.15);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(168, 155, 135, 0.2);
+            margin: 20px 0;
+        }
+        
+        .menu-display:before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #a89b87, #c9bfb0, #a89b87);
+            z-index: -1;
+            border-radius: 22px;
+        }
+        
+        .dish-name {
+            font-size: 4.5rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 30px;
+            color: #5a5246;
+            transition: all 0.3s ease;
+            line-height: 1.3;
+        }
+        
+        .dish-name.selected {
+            color: #d47a5e;
+            font-size: 5rem;
+            text-shadow: 2px 2px 8px rgba(212, 122, 94, 0.3);
+            animation: pulse 1.5s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.05);
+            }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 18px 45px;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .start-btn {
+            background-color: #a89b87;
+            color: white;
+        }
+        
+        .start-btn:hover {
+            background-color: #8a7f6e;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(138, 127, 110, 0.3);
+        }
+        
+        .start-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .start-btn.running {
+            background-color: #d47a5e;
+        }
+        
+        .detail-btn {
+            background-color: #9aad8e;
+            color: white;
+        }
+        
+        .detail-btn:hover {
+            background-color: #819477;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(154, 173, 142, 0.3);
+        }
+        
+        .detail-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .detail-btn:disabled {
+            background-color: #b9c4b2;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detail-btn:disabled:hover {
+            transform: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: modalAppear 0.4s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            background-color: #a89b87;
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .dish-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .detail-section {
+            margin-bottom: 10px;
+        }
+        
+        .detail-section h3 {
+            color: #8a7f6e;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0ece4;
+        }
+        
+        .detail-section p, .detail-section ul {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .detail-section ul {
+            padding-left: 20px;
+        }
+        
+        .detail-section li {
+            margin-bottom: 8px;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            color: #9c9080;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .loading {
+            font-size: 1.5rem;
+            color: #a89b87;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .dish-name {
+                font-size: 3.2rem;
+            }
+            
+            .dish-name.selected {
+                font-size: 3.5rem;
+            }
+            
+            .menu-display {
+                height: 300px;
+            }
+            
+            .btn {
+                padding: 15px 35px;
+                font-size: 1.2rem;
+            }
+            
+            .controls {
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .dish-name {
+                font-size: 2.5rem;
+                padding: 20px;
+            }
+            
+            .dish-name.selected {
+                font-size: 2.7rem;
+            }
+            
+            .menu-display {
+                height: 250px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>随机点菜</h1>
+            <p class="subtitle">点击开始按钮随机选择菜品，再次点击暂停选择</p>
+        </header>
+        
+        <main class="menu-display">
+            <div class="dish-name" id="dishDisplay">点击开始按钮</div>
+        </main>
+        
+        <div class="controls">
+            <button class="btn start-btn" id="startBtn">
+                <i class="fas fa-play"></i> 开始随机
+            </button>
+            <button class="btn detail-btn" id="detailBtn" disabled>
+                <i class="fas fa-info-circle"></i> 查看详情
+            </button>
+        </div>
+    </div>
+    
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">菜品详情</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent" class="dish-detail">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>随机点菜系统 &copy; 2023 | 让选择不再困难</p>
+    </footer>
+
+    <script>
+        // 菜品数据库
+        const dishes = [
+            {
+                name: "宫保鸡丁",
+                description: "经典川菜，以鸡肉为主料，配以花生米、黄瓜、辣椒等炒制而成，口感麻辣鲜香。",
+                ingredients: ["鸡胸肉", "花生米", "干辣椒", "花椒", "葱", "姜", "蒜", "酱油", "料酒", "糖", "醋", "淀粉"],
+                steps: ["鸡胸肉切丁，用料酒、淀粉腌制", "干辣椒切段，葱姜蒜切末", "热锅凉油，下花椒、干辣椒爆香", "加入鸡丁翻炒至变色", "加入调料和花生米翻炒均匀", "出锅前撒上葱花"],
+                cookingTime: "20分钟",
+                difficulty: "中等",
+                category: "川菜"
+            },
+            {
+                name: "麻婆豆腐",
+                description: "四川传统名菜，主要原料为豆腐和肉末，特点是麻、辣、烫、香、酥、嫩、鲜、活。",
+                ingredients: ["嫩豆腐", "牛肉末", "豆瓣酱", "豆豉", "辣椒粉", "花椒粉", "葱", "姜", "蒜", "酱油", "料酒", "淀粉"],
+                steps: ["豆腐切块，用开水加盐焯烫", "热油炒香牛肉末", "加入豆瓣酱、豆豉、辣椒粉炒出红油", "加入适量水，放入豆腐烧煮", "勾芡，撒上花椒粉和葱花"],
+                cookingTime: "15分钟",
+                difficulty: "中等",
+                category: "川菜"
+            },
+            {
+                name: "红烧肉",
+                description: "经典中国家常菜，选用五花肉，用冰糖炒糖色后炖煮而成，色泽红亮，肥而不腻。",
+                ingredients: ["五花肉", "冰糖", "生姜", "葱", "料酒", "生抽", "老抽", "八角", "香叶", "桂皮"],
+                steps: ["五花肉切块，冷水下锅焯水", "冰糖炒成糖色", "加入五花肉翻炒上色", "加入料酒、生抽、老抽、香料", "加水炖煮1小时", "大火收汁"],
+                cookingTime: "90分钟",
+                difficulty: "中等",
+                category: "家常菜"
+            },
+            {
+                name: "番茄炒蛋",
+                description: "简单美味的家常菜，营养丰富，色泽鲜艳，酸甜可口，适合所有年龄段的人群。",
+                ingredients: ["鸡蛋", "番茄", "葱", "盐", "糖", "食用油"],
+                steps: ["鸡蛋打散，加少许盐", "番茄切块", "热油炒熟鸡蛋盛出", "用余油炒番茄至出汁", "加入炒好的鸡蛋，加糖和盐调味", "翻炒均匀撒上葱花"],
+                cookingTime: "10分钟",
+                difficulty: "简单",
+                category: "家常菜"
+            },
+            {
+                name: "清蒸鲈鱼",
+                description: "广东名菜，以新鲜鲈鱼为主料，清蒸而成，最大程度保留了鱼的原汁原味，鲜嫩可口。",
+                ingredients: ["鲈鱼", "姜", "葱", "红椒", "料酒", "蒸鱼豉油", "食用油"],
+                steps: ["鲈鱼处理干净，两面划几刀", "鱼身抹料酒，放上姜片", "水开后上锅蒸8-10分钟", "取出倒掉盘中水，去掉姜片", "铺上葱丝、红椒丝，淋上蒸鱼豉油", "浇上热油"],
+                cookingTime: "15分钟",
+                difficulty: "简单",
+                category: "粤菜"
+            },
+            {
+                name: "水煮牛肉",
+                description: "川菜代表之一，牛肉片滑嫩，配以豆芽、青菜等，淋上热油和辣椒，麻辣鲜香。",
+                ingredients: ["牛肉", "豆芽", "青菜", "豆瓣酱", "干辣椒", "花椒", "葱", "姜", "蒜", "料酒", "淀粉", "辣椒粉"],
+                steps: ["牛肉切片，用料酒、淀粉腌制", "豆芽、青菜焯水垫底", "炒香豆瓣酱、葱姜蒜，加水煮开", "下牛肉片煮熟，连汤倒入碗中", "撒上辣椒粉、花椒、蒜末", "浇上热油"],
+                cookingTime: "25分钟",
+                difficulty: "中等",
+                category: "川菜"
+            },
+            {
+                name: "糖醋里脊",
+                description: "经典中式菜肴，外酥里嫩，酸甜可口，色泽金黄，是宴客和家庭聚餐的佳选。",
+                ingredients: ["猪里脊", "鸡蛋", "面粉", "淀粉", "番茄酱", "白糖", "白醋", "盐", "料酒"],
+                steps: ["里脊切条，用盐、料酒腌制", "鸡蛋、面粉、淀粉调成糊", "里脊裹糊下锅炸至金黄", "番茄酱、糖、醋调成汁", "炒香糖醋汁，放入炸好的里脊快速翻炒", "出锅装盘"],
+                cookingTime: "30分钟",
+                difficulty: "中等",
+                category: "家常菜"
+            },
+            {
+                name: "鱼香茄子",
+                description: "川菜经典，茄子软糯入味，鱼香味浓，微辣酸甜，非常下饭。",
+                ingredients: ["茄子", "猪肉末", "豆瓣酱", "葱", "姜", "蒜", "糖", "醋", "酱油", "料酒", "淀粉"],
+                steps: ["茄子切条，油炸或煎至软", "炒香肉末，加入豆瓣酱、葱姜蒜", "加入茄子翻炒", "调入糖、醋、酱油、料酒", "加水烧煮片刻", "勾芡出锅"],
+                cookingTime: "20分钟",
+                difficulty: "中等",
+                category: "川菜"
+            },
+            {
+                name: "蒜蓉西兰花",
+                description: "简单健康的素菜，西兰花清脆，蒜香浓郁，营养价值高，适合日常饮食。",
+                ingredients: ["西兰花", "大蒜", "盐", "食用油", "鸡精"],
+                steps: ["西兰花掰成小朵，洗净", "大蒜切末", "西兰花焯水1分钟", "热油爆香蒜末", "加入西兰花翻炒", "加盐和鸡精调味"],
+                cookingTime: "10分钟",
+                difficulty: "简单",
+                category: "素菜"
+            },
+            {
+                name: "京酱肉丝",
+                description: "北京传统名菜，肉丝滑嫩，酱香浓郁，通常配以豆腐皮和葱丝卷食。",
+                ingredients: ["猪里脊", "甜面酱", "葱", "姜", "糖", "料酒", "淀粉", "豆腐皮"],
+                steps: ["里脊切丝，用料酒、淀粉腌制", "葱白切细丝垫底", "炒熟肉丝盛出", "炒香甜面酱，加糖和少许水", "加入肉丝翻炒均匀", "盛在葱丝上，配豆腐皮食用"],
+                cookingTime: "20分钟",
+                difficulty: "中等",
+                category: "京菜"
+            }
+        ];
+
+        // DOM元素
+        const dishDisplay = document.getElementById('dishDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const detailBtn = document.getElementById('detailBtn');
+        const detailModal = document.getElementById('detailModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        
+        // 状态变量
+        let isRunning = false;
+        let intervalId = null;
+        let currentDishIndex = -1;
+        let selectedDish = null;
+        
+        // 随机选择菜品
+        function getRandomDish() {
+            const randomIndex = Math.floor(Math.random() * dishes.length);
+            return {
+                index: randomIndex,
+                dish: dishes[randomIndex]
+            };
+        }
+        
+        // 开始/停止随机滚动
+        function toggleRandom() {
+            if (isRunning) {
+                // 停止滚动
+                clearInterval(intervalId);
+                isRunning = false;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> 开始随机';
+                startBtn.classList.remove('running');
+                
+                // 获取当前显示的菜品并选中
+                const dishResult = getRandomDish();
+                currentDishIndex = dishResult.index;
+                selectedDish = dishResult.dish;
+                
+                // 显示选中的菜品并应用选中样式
+                dishDisplay.textContent = selectedDish.name;
+                dishDisplay.classList.add('selected');
+                
+                // 启用详情按钮
+                detailBtn.disabled = false;
+            } else {
+                // 开始滚动
+                isRunning = true;
+                startBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停选择';
+                startBtn.classList.add('running');
+                
+                // 移除选中样式
+                dishDisplay.classList.remove('selected');
+                
+                // 禁用详情按钮
+                detailBtn.disabled = true;
+                
+                // 设置滚动间隔
+                intervalId = setInterval(() => {
+                    const dishResult = getRandomDish();
+                    dishDisplay.textContent = dishResult.dish.name;
+                }, 80); // 每80毫秒切换一次
+            }
+        }
+        
+        // 显示菜品详情
+        function showDetail() {
+            if (!selectedDish) return;
+            
+            modalTitle.textContent = selectedDish.name;
+            
+            // 构建详情内容
+            modalContent.innerHTML = `
+                <div class="detail-section">
+                    <h3>菜品简介</h3>
+                    <p>${selectedDish.description}</p>
+                </div>
+                <div class="detail-section">
+                    <h3>主要食材</h3>
+                    <ul>
+                        ${selectedDish.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="detail-section">
+                    <h3>烹饪步骤</h3>
+                    <ol>
+                        ${selectedDish.steps.map(step => `<li>${step}</li>`).join('')}
+                    </ol>
+                </div>
+                <div style="display: flex; gap: 30px;">
+                    <div class="detail-section">
+                        <h3>烹饪时间</h3>
+                        <p>${selectedDish.cookingTime}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>难度</h3>
+                        <p>${selectedDish.difficulty}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>菜系</h3>
+                        <p>${selectedDish.category}</p>
+                    </div>
+                </div>
+            `;
+            
+            detailModal.style.display = 'flex';
+        }
+        
+        // 关闭详情模态框
+        function closeDetailModal() {
+            detailModal.style.display = 'none';
+        }
+        
+        // 点击模态框外部关闭
+        detailModal.addEventListener('click', function(e) {
+            if (e.target === detailModal) {
+                closeDetailModal();
+            }
+        });
+        
+        // 初始化：显示一个随机菜品
+        function initialize() {
+            const dishResult = getRandomDish();
+            currentDishIndex = dishResult.index;
+            selectedDish = dishResult.dish;
+            dishDisplay.textContent = selectedDish.name;
+            detailBtn.disabled = false;
+        }
+        
+        // 事件监听
+        startBtn.addEventListener('click', toggleRandom);
+        detailBtn.addEventListener('click', showDetail);
+        closeModal.addEventListener('click', closeDetailModal);
+        
+        // 初始化页面
+        initialize();
+    </script>
+</body>
+</html>
