@@ -1,2 +1,6 @@
 # temp config
 export https_proxy=http://192.168.79.1:7890;export http_proxy=http://192.168.79.1:7890;export all_proxy=socks5://192.168.79.1:7890
+
+# linux git push config 
+git config http.proxy 192.168.79.1:7890
+git config https.proxy 192.168.79.1:7890
