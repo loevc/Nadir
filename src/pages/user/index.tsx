@@ -13,7 +13,9 @@ export default function UserPage() {
     <div style={{ padding: 20 }}>
       <h1>User List</h1>
 
-      {users.length > 0 ? (
+ {/* this part is commented out to avoid rendering issues while fetching users */}
+
+      {/* {users.length > 0 ? (
         users.map((u) => (
           <div key={u.id} style={{ marginBottom: 10 }}>
             <p>Name: {u.name}</p>
@@ -21,7 +23,7 @@ export default function UserPage() {
         ))
       ) : (
         <p>Loading users...</p>
-      )}
+      )} */}
     </div>
   );
 }
