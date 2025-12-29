@@ -15,7 +15,7 @@ export default function UserPage() {
 
  {/* this part is commented out to avoid rendering issues while fetching users */}
 
-      {/* {users.length > 0 ? (
+      {users.length > 0 ? (
         users.map((u) => (
           <div key={u.id} style={{ marginBottom: 10 }}>
             <p>Name: {u.name}</p>
@@ -23,7 +23,10 @@ export default function UserPage() {
         ))
       ) : (
         <p>Loading users...</p>
-      )} */}
+      )}
+
+      
+
     </div>
   );
 }

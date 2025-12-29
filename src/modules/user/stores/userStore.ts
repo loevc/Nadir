@@ -13,7 +13,9 @@ export const useUserStore = create<UserState>((set) => ({
   fetchUsers: async () => {
     try {
       const list = await getUserList();
-      set({users : list});
+      const userList = Array.isArray(list) ? list : [];
+      console.log("Fetched users:", list);
+      set({users : userList});
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
