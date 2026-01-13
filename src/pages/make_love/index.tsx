@@ -21,12 +21,12 @@ export default function MakeLovePage() {
 
     return (
         <>
-            <div className="flex flex-col text-red-500  ">
+            <div className="flex flex-col text-pink-500  ">
                 <h1>整了吗</h1>   
             </div>
             <div className="flex flex-row">
-                <button onClick={handleDoIt}>整一下</button>
-                <button onClick={handleWait}>再等等</button>
+                <button className="text-green-500 mr-4" onClick={handleDoIt}>整一下</button>
+                <button className="text-red-500 ml-4" onClick={handleWait}>再等等</button>
             </div>
         </>
     );
