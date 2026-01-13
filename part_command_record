@@ -1,0 +1,3 @@
+# install tailwind
+
+pnpm add -D tailwindcss @tailwindcss/vite

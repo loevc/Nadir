@@ -5,6 +5,7 @@ import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import UserPage from '@/pages/user'
 import { TestPlain } from './modules/test/component'
+import MakeLovePage from './pages/make_love'
 
 function App() {
   const [count, setCount] = useState(1)
@@ -41,6 +42,7 @@ function App() {
             <TestPlain title='test_name' size={2} render={() => <div style={{ color: 'red' }}>render fx</div>} />
           </>
         } />
+        <Route path="/make-love" element={<MakeLovePage />} />
       </Routes>
     </BrowserRouter>
   )
