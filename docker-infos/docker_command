@@ -1,0 +1,8 @@
+docker ps -a
+
+docker compose -f mysql57.yaml up
+
+docker stop xx
+docker rm xx
+
+docker rmi xxxxxxxxxxxxx
