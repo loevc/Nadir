@@ -1,0 +1,16 @@
+app:
+name: backend-golang
+port: 8080
+
+
+database:
+dsn: root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True
+
+
+redis:
+addr: 127.0.0.1:6379
+password: ""
+
+
+jwt:
+secret: super-secret-key
