@@ -7,3 +7,6 @@ go get -u github.com/gin-gonic/gin
 
 touch main.go
 
+go mod init github.com/loevc/Nadir/backend-golang
+
+go mod tidy 
