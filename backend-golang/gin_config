@@ -1,0 +1,9 @@
+cd ~
+
+mkdir gin-quickstart && cd gin-quickstart
+go mod init gin-quickstart
+
+go get -u github.com/gin-gonic/gin
+
+touch main.go
+

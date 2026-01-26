@@ -1,1 +1,12 @@
-1.24
+go version
+go version go1.24.12 darwin/amd64
+
+
+install method:
+download this on MacOS (not apple silicon): https://go.dev/dl/go1.24.12.darwin-amd64.pkg 
+
+# confirm this install location
+echo 'export PATH="/usr/local/go/bin:$PATH"' >> ~/.zshrc
+echo 'export PATH="$HOME/go/bin:$PATH"' >> ~/.zshrc
+
+source ~/.zshrc
