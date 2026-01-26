@@ -12,7 +12,7 @@ func InitRouter() *gin.Engine {
 r := gin.Default()
 
 
-r.Use(middleware.RequestLogger())
+// r.Use(middleware.RequestLogger())
 
 
 apiGroup := r.Group("/api")
