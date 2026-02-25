@@ -1,0 +1,10 @@
+# vscode
+.vscode/
+
+# temp ignore backend
+backend-golang/
+
+# nodejs generated files
+node_modules/
+dist/
+

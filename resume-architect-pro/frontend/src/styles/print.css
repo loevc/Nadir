@@ -1,0 +1,11 @@
+
+@media print {
+  body {
+    background: none;
+  }
+
+  .resume-container {
+    margin: 0;
+    box-shadow: none;
+  }
+}
